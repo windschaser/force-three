@@ -3,21 +3,24 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 import DragControls from 'three-dragcontrols';
 
+let data = require('./data.json');
 const TrackballControls = require('three-trackballcontrols');
 
 (() => {
 	let width = 1200;
 	let height = 900;
 	let color = d3.scaleOrdinal(d3.schemeCategory10);
+	let nodes = data.gexf.graph.nodes.node.map(value => ({name: value['-label']}));
 	
-	let nodes = [{name: "桂林"}, {name: "广州"},
-		{name: "厦门"}, {name: "杭州"},
-		{name: "上海"}, {name: "青岛"},
-		{name: "天津"}];
-	
-	let edges = [{source: 0, target: 1}, {source: 0, target: 2},
-		{source: 1, target: 3}, {source: 1, target: 4}, {source: 2, target: 5},
-		{source: 2, target: 6}, {source: 6, target: 0}];
+	let edges = data.gexf.graph.edges.edge.map(value => ({source: value['-source'], target: value['-target']}));
+	// let nodes = [{name: "桂林"}, {name: "广州"},
+	// 	{name: "厦门"}, {name: "杭州"},
+	// 	{name: "上海"}, {name: "青岛"},
+	// 	{name: "天津"}];
+	//
+	// let edges = [{source: 0, target: 1}, {source: 0, target: 2},
+	// 	{source: 1, target: 3}, {source: 1, target: 4}, {source: 2, target: 5},
+	// 	{source: 2, target: 6}, {source: 6, target: 0}];
 	
 	let world = new CANNON.World();
 	world.gravity.set(0, 0, 0);
@@ -26,8 +29,9 @@ const TrackballControls = require('three-trackballcontrols');
 	let scene = new THREE.Scene();
 	let renderer = new THREE.WebGLRenderer({antialias: true});
 	renderer.setSize(width, height);
-	renderer.shadowMapEnabled = true;
+	renderer.shadowMap.enabled = true;
 	renderer.setClearColor(0x333333, 1.0);
+	renderer.autoClear = false;
 	document.body.appendChild(renderer.domElement);
 	
 	let camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
@@ -118,18 +122,19 @@ const TrackballControls = require('three-trackballcontrols');
 	edges.forEach((value => {
 		let material = new THREE.LineBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
 		let geometry = new THREE.Geometry();
-		geometry.vertices.push(new THREE.Vector3(-100, 50, 0));
-		geometry.vertices.push(new THREE.Vector3(100, 0, 0));
+		geometry.vertices.push(nodes[value.source].body.position);
+		geometry.vertices.push(nodes[value.target].body.position);
 		geometry.colors.push(new THREE.Color(color(value.source)), new THREE.Color(color(value.target)));
 		let line = new THREE.Line(geometry, material);
 		line.castShadow = true;
 		line.receiveShadow = true;
+		line.frustumCulled = false;
 		scene.add(line);
 		value.body = line;
 		
 		let pbodyA = nodes[value.source].pbody;
 		let pbodyB = nodes[value.target].pbody;
-		let constraint = new CANNON.DistanceConstraint(pbodyA, pbodyB, 50, 5);
+		let constraint = new CANNON.DistanceConstraint(pbodyA, pbodyB, 50, 25);
 		world.addConstraint(constraint);
 	}));
 	
@@ -140,7 +145,7 @@ const TrackballControls = require('three-trackballcontrols');
 		scene.add(light);
 		
 		light = new THREE.SpotLight(0xffffff, 0.4);
-		light.position.set(100, 100, 300);
+		light.position.set(0, 0, 300);
 		light.castShadow = true;
 		light.shadow.mapSize.width = 8192;
 		light.shadow.mapSize.height = 8192;
@@ -151,7 +156,7 @@ const TrackballControls = require('three-trackballcontrols');
 		light.castShadow = true;
 		light.shadow.mapSize.width = 8192;
 		light.shadow.mapSize.height = 8192;
-		scene.add(light);
+		//scene.add(light);
 	}
 	
 	createLight();
@@ -218,11 +223,8 @@ const TrackballControls = require('three-trackballcontrols');
 		});
 		edges.forEach(value => {
 			value.body.geometry.verticesNeedUpdate = true;
-			let bodyA = nodes[value.source].body;
-			let bodyB = nodes[value.target].body;
-			value.body.geometry.vertices[0] = new THREE.Vector3(bodyA.position.x, bodyA.position.y, bodyA.position.z);
-			value.body.geometry.vertices[1] = new THREE.Vector3(bodyB.position.x, bodyB.position.y, bodyB.position.z);
 		});
+		renderer.clear();
 		renderer.render(scene, camera);
 		traceballControls.update();
 	};
