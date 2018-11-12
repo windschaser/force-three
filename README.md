@@ -1,5 +1,5 @@
 # force-three
-基于d3力导向图模拟器和three.js的三维力导向图
+基于three.js和cannon.js的三维力导向图
 
 知乎文章链接：https://zhuanlan.zhihu.com/p/49438167
 
