@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 import DragControls from 'three-dragcontrols';
 
-let data = require('./data.json');
 const TrackballControls = require('three-trackballcontrols');
 
 (() => {
