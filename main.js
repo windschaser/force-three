@@ -3,24 +3,24 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 import DragControls from 'three-dragcontrols';
 
-let data = require('./data.json');
+//let data = require('./data.json');
 const TrackballControls = require('three-trackballcontrols');
 
 (() => {
 	let width = 1200;
 	let height = 900;
 	let color = d3.scaleOrdinal(d3.schemeCategory10);
-	let nodes = data.gexf.graph.nodes.node.map(value => ({name: value['-label']}));
+	/*let nodes = data.gexf.graph.nodes.node.map(value => ({name: value['-label']}));
 	
-	let edges = data.gexf.graph.edges.edge.map(value => ({source: value['-source'], target: value['-target']}));
-	// let nodes = [{name: "桂林"}, {name: "广州"},
-	// 	{name: "厦门"}, {name: "杭州"},
-	// 	{name: "上海"}, {name: "青岛"},
-	// 	{name: "天津"}];
-	//
-	// let edges = [{source: 0, target: 1}, {source: 0, target: 2},
-	// 	{source: 1, target: 3}, {source: 1, target: 4}, {source: 2, target: 5},
-	// 	{source: 2, target: 6}, {source: 6, target: 0}];
+	let edges = data.gexf.graph.edges.edge.map(value => ({source: value['-source'], target: value['-target']}));*/
+	let nodes = [{name: "桂林"}, {name: "广州"},
+		{name: "厦门"}, {name: "杭州"},
+		{name: "上海"}, {name: "青岛"},
+		{name: "天津"}];
+
+	let edges = [{source: 0, target: 1}, {source: 0, target: 2},
+		{source: 1, target: 3}, {source: 1, target: 4}, {source: 2, target: 5},
+		{source: 2, target: 6}, {source: 6, target: 0}];
 	
 	let world = new CANNON.World();
 	world.gravity.set(0, 0, 0);
@@ -31,7 +31,6 @@ const TrackballControls = require('three-trackballcontrols');
 	renderer.setSize(width, height);
 	renderer.shadowMap.enabled = true;
 	renderer.setClearColor(0x333333, 1.0);
-	renderer.autoClear = false;
 	document.body.appendChild(renderer.domElement);
 	
 	let camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
@@ -97,7 +96,7 @@ const TrackballControls = require('three-trackballcontrols');
 			let sphere = new THREE.Mesh(sphere_geometry, sphere_material);
 			sphere.castShadow = true;
 			sphere.receiveShadow = true;
-			sphere.position.set(50 * index, 50 * index, 100);
+			sphere.position.set(50 * index + 15, 50 * index + 35, 50 * index + 25);
 			scene.add(sphere);
 			dragObjects.push(sphere);
 			value.body = sphere;
@@ -224,7 +223,6 @@ const TrackballControls = require('three-trackballcontrols');
 		edges.forEach(value => {
 			value.body.geometry.verticesNeedUpdate = true;
 		});
-		renderer.clear();
 		renderer.render(scene, camera);
 		traceballControls.update();
 	};
