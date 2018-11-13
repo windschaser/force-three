@@ -10,9 +10,9 @@ const TrackballControls = require('three-trackballcontrols');
 	let width = 1200;
 	let height = 900;
 	let color = d3.scaleOrdinal(d3.schemeCategory10);
-	/*let nodes = data.gexf.graph.nodes.node.map(value => ({name: value['-label']}));
-	
-	let edges = data.gexf.graph.edges.edge.map(value => ({source: value['-source'], target: value['-target']}));*/
+	// let nodes = data.gexf.graph.nodes.node.map(value => ({name: value['-label']}));
+	//
+	// let edges = data.gexf.graph.edges.edge.map(value => ({source: value['-source'], target: value['-target']}));
 	let nodes = [{name: "桂林"}, {name: "广州"},
 		{name: "厦门"}, {name: "杭州"},
 		{name: "上海"}, {name: "青岛"},
@@ -96,7 +96,8 @@ const TrackballControls = require('three-trackballcontrols');
 			let sphere = new THREE.Mesh(sphere_geometry, sphere_material);
 			sphere.castShadow = true;
 			sphere.receiveShadow = true;
-			sphere.position.set(50 * index + 15, 50 * index + 35, 50 * index + 25);
+			sphere.frustumCulled = false;
+			sphere.position.set(20 * index + Math.random()*20, 20 * index + Math.random()*20, 20 * index + Math.random()*20);
 			scene.add(sphere);
 			dragObjects.push(sphere);
 			value.body = sphere;
@@ -155,7 +156,7 @@ const TrackballControls = require('three-trackballcontrols');
 		light.castShadow = true;
 		light.shadow.mapSize.width = 8192;
 		light.shadow.mapSize.height = 8192;
-		//scene.add(light);
+		scene.add(light);
 	}
 	
 	createLight();
