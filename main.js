@@ -4,6 +4,7 @@ import * as CANNON from 'cannon';
 import DragControls from 'three-dragcontrols';
 
 const TrackballControls = require('three-trackballcontrols');
+let data = require('./data.json');
 window.top.forceBallBackground = 0xffffff;
 
 (async () => {
